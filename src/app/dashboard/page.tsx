@@ -10,6 +10,8 @@ import ReviewsTab from "@/components/dashboard/ReviewsTab";
 import WidgetsTab from "@/components/dashboard/WidgetsTab";
 import GatingQRTab from "@/components/dashboard/GatingQRTab";
 import ReportsTab from "@/components/dashboard/ReportsTab";
+import { ToastProvider, showToast } from "@/components/ui/Toast";
+import { Spinner } from "@/components/ui/Spinner";
 import { Location, Review, Analysis, FeedbackItem, GbpReview, DisputeResult } from "@/types/dashboard";
 
 type ActiveTab = "overview" | "reviews" | "widgets" | "qr" | "reports";
@@ -382,8 +384,8 @@ function DashboardContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-9 w-9 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="text-xs font-medium text-slate-500">Cargando tu panel de StarPress...</p>
+          <Spinner size="lg" />
+          <p className="text-xs font-medium text-slate-500">Loading your StarPress dashboard...</p>
         </div>
       </div>
     );
@@ -399,6 +401,7 @@ function DashboardContent() {
 
   return (
     <div className="min-h-screen bg-[#f9f8f6] text-[#171417] antialiased">
+      <ToastProvider />
       {/* Top Header */}
       <header className="sticky top-0 z-30 border-b border-[#f0e9e1] bg-[#f9f8f6]/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 h-16">
@@ -457,6 +460,13 @@ function DashboardContent() {
                 Pasar a Pro
               </Link>
             )}
+
+            <Link
+              href="/settings"
+              className="text-xs font-semibold text-slate-600 hover:text-slate-900"
+            >
+              Settings
+            </Link>
 
             <button
               onClick={async () => {
@@ -716,7 +726,7 @@ export default function DashboardPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+          <Spinner size="lg" />
         </div>
       }
     >

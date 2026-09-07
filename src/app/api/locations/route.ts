@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { withRetry } from "@/lib/retry";
+import { withTimeout } from "@/lib/timeout";
+import * as Sentry from "@sentry/nextjs";
 
 interface ApifyReview {
   text: string;
@@ -87,21 +90,28 @@ export async function POST(request: Request) {
     }
 
     // Run Apify actor to scrape Google Maps
-    const apifyResponse = await fetch(
-      "https://api.apify.com/v2/acts/compass~crawler-google-places/runs",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.APIFY_API_TOKEN}`,
-        },
-        body: JSON.stringify(apifyInput),
-      }
+    const apifyResponse = await withTimeout(
+      withRetry(
+        () =>
+          fetch("https://api.apify.com/v2/acts/compass~crawler-google-places/runs", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.APIFY_API_TOKEN}`,
+            },
+            body: JSON.stringify(apifyInput),
+          }),
+        { retries: 2, delay: 1000, backoff: 2 }
+      ),
+      30000
     );
 
     if (!apifyResponse.ok) {
       const errText = await apifyResponse.text();
       console.error("[Locations] Apify start error:", apifyResponse.status, errText);
+      Sentry.captureMessage("Apify start failed", {
+        extra: { status: apifyResponse.status, error: errText, userId: user.id },
+      });
       return NextResponse.json(
         { error: "Failed to start scraping. Check your Apify token." },
         { status: 500 }
@@ -117,11 +127,15 @@ export async function POST(request: Request) {
     for (let i = 0; i < 60; i++) {
       await new Promise((r) => setTimeout(r, 2000));
 
-      const statusResponse = await fetch(
-        `https://api.apify.com/v2/acts/compass~crawler-google-places/runs/${runId}`,
-        {
-          headers: { Authorization: `Bearer ${process.env.APIFY_API_TOKEN}` },
-        }
+      const statusResponse = await withRetry(
+        () =>
+          fetch(
+            `https://api.apify.com/v2/acts/compass~crawler-google-places/runs/${runId}`,
+            {
+              headers: { Authorization: `Bearer ${process.env.APIFY_API_TOKEN}` },
+            }
+          ),
+        { retries: 2, delay: 500, backoff: 1 }
       );
 
       if (!statusResponse.ok) {
@@ -135,11 +149,15 @@ export async function POST(request: Request) {
       if (status.data.status === "SUCCEEDED") {
         const datasetId = status.data.defaultDatasetId;
         console.log("[Locations] Dataset ID:", datasetId);
-        const datasetResponse = await fetch(
-          `https://api.apify.com/v2/datasets/${datasetId}/items?clean=true&format=json`,
-          {
-            headers: { Authorization: `Bearer ${process.env.APIFY_API_TOKEN}` },
-          }
+        const datasetResponse = await withRetry(
+          () =>
+            fetch(
+              `https://api.apify.com/v2/datasets/${datasetId}/items?clean=true&format=json`,
+              {
+                headers: { Authorization: `Bearer ${process.env.APIFY_API_TOKEN}` },
+              }
+            ),
+          { retries: 2, delay: 500, backoff: 1 }
         );
         const items = await datasetResponse.json();
         console.log("[Locations] Dataset items:", items.length);
@@ -151,6 +169,9 @@ export async function POST(request: Request) {
 
       if (status.data.status === "FAILED" || status.data.status === "ABORTED") {
         console.error("[Locations] Apify run failed:", status.data.status);
+        Sentry.captureMessage("Apify run failed", {
+          extra: { status: status.data.status, userId: user.id },
+        });
         return NextResponse.json(
           { error: "Scraping failed. The URL might be invalid. Try a different URL." },
           { status: 500 }

@@ -31,6 +31,16 @@ export default function SignupPage() {
       return;
     }
 
+    try {
+      await fetch("/api/email/welcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name: email.split("@")[0] }),
+      });
+    } catch {
+      // Silent fail — email is non-critical
+    }
+
     setSuccess(true);
     setLoading(false);
   };

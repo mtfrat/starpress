@@ -42,19 +42,26 @@ export async function GET(
       .eq("location_id", locationId)
       .single();
 
-    return NextResponse.json({
-      location,
-      config: config || {
-        theme: "light",
-        primary_color: "#3b82f6",
-        font_family: "Inter",
-        hide_watermark: false,
-        widget_type: "list",
-        sort_by: "best",
+    return NextResponse.json(
+      {
+        location,
+        config: config || {
+          theme: "light",
+          primary_color: "#3b82f6",
+          font_family: "Inter",
+          hide_watermark: false,
+          widget_type: "list",
+          sort_by: "best",
+        },
+        reviews: cache?.raw_reviews || [],
+        last_synced: cache?.last_synced_at || null,
       },
-      reviews: cache?.raw_reviews || [],
-      last_synced: cache?.last_synced_at || null,
-    });
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
   } catch (error) {
     console.error("GET /api/widget error:", error);
     return NextResponse.json(

@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest",
+    "test:run": "vitest run",
     "check:stripe": "node scripts/check-stripe.js"
   },
   "dependencies": {
@@ -23,7 +25,10 @@
     "qrcode": "^1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "stripe": "^22.6.0"
+    "resend": "^6.26.0",
+    "sonner": "^2.0.8",
+    "stripe": "^22.6.0",
+    "vite": "^8.2.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -33,6 +38,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.0"
   }
 }

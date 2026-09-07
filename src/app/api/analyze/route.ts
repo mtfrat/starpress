@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { withRetry } from "@/lib/retry";
+import { withTimeout } from "@/lib/timeout";
 import OpenAI from "openai";
+import * as Sentry from "@sentry/nextjs";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -104,18 +107,25 @@ export async function POST(request: Request) {
       .map((r) => `[${r.rating}/5 stars] ${r.author}: ${r.text}`)
       .join("\n");
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      temperature: 0.3,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: `Analyze these reviews for the business "${location?.name}":\n\n${reviewsText}`,
-        },
-      ],
-    });
+    const completion = await withTimeout(
+      withRetry(
+        () =>
+          openai.chat.completions.create({
+            model: "gpt-4o",
+            temperature: 0.3,
+            response_format: { type: "json_object" },
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              {
+                role: "user",
+                content: `Analyze these reviews for the business "${location?.name}":\n\n${reviewsText}`,
+              },
+            ],
+          }),
+        { retries: 2, delay: 1000, backoff: 2 }
+      ),
+      60000
+    );
 
     const content = completion.choices[0]?.message?.content;
     if (!content) {
@@ -144,6 +154,9 @@ export async function POST(request: Request) {
     return NextResponse.json(analysis);
   } catch (error) {
     console.error("POST /api/analyze error:", error);
+    Sentry.captureException(error, {
+      extra: { action: "analyze" },
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { withRetry } from "@/lib/retry";
+import { withTimeout } from "@/lib/timeout";
 import OpenAI from "openai";
+import * as Sentry from "@sentry/nextjs";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -70,15 +73,18 @@ export async function POST(request: Request) {
 
     const ratingStars = "⭐".repeat(review_rating || 5);
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      temperature: 0.7,
-      max_tokens: 200,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        {
-          role: "user",
-          content: `Business: ${location?.name || "Our business"}
+    const completion = await withTimeout(
+      withRetry(
+        () =>
+          openai.chat.completions.create({
+            model: "gpt-4o",
+            temperature: 0.7,
+            max_tokens: 200,
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              {
+                role: "user",
+                content: `Business: ${location?.name || "Our business"}
 
 Customer Review (${ratingStars}):
 "${review_text}"
@@ -86,9 +92,13 @@ Customer Review (${ratingStars}):
 Customer name: ${review_author}
 
 Write a professional reply to this review.`,
-        },
-      ],
-    });
+              },
+            ],
+          }),
+        { retries: 2, delay: 1000, backoff: 2 }
+      ),
+      60000
+    );
 
     const reply = completion.choices[0]?.message?.content;
     if (!reply) {
@@ -101,6 +111,9 @@ Write a professional reply to this review.`,
     return NextResponse.json({ reply: reply.trim() });
   } catch (error) {
     console.error("POST /api/respond error:", error);
+    Sentry.captureException(error, {
+      extra: { action: "respond" },
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

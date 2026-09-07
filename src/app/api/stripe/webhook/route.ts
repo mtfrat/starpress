@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { getServiceClient } from "@/lib/supabase/server";
+import { emails } from "@/lib/email";
 import Stripe from "stripe";
 
 // Disable body parsing — Stripe needs the raw body
@@ -44,6 +45,21 @@ export async function POST(request: Request) {
               stripe_subscription_id: session.subscription as string,
             })
             .eq("id", userId);
+
+          // Send payment confirmation email
+          try {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("email")
+              .eq("id", userId)
+              .single();
+
+            if (profile?.email) {
+              await emails.paymentSuccess(profile.email, "Pro");
+            }
+          } catch {
+            console.error("[Stripe Webhook] Failed to send payment email");
+          }
 
           console.log("[Stripe Webhook] User upgraded to Pro:", userId);
         }
