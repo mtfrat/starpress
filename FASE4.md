@@ -65,6 +65,11 @@ En Vercel Dashboard → Settings → Environment Variables, agregar:
 3. Verificar que el build es exitoso
 4. Obtener URL temporal de Vercel (ej: `starpress-xxx.vercel.app`)
 
+**Fix para peer dependency conflict (vitest):**
+Si el build falla por `@types/node`:
+1. Configurar variable de entorno: `NPM_CONFIG_LEGACY_PEER_DEPS=true`
+2. O agregar en package.json: `"overrides": { "@types/node": "^22" }`
+
 ---
 
 ## 4.2 Configurar Dominio
