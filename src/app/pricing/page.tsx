@@ -67,21 +67,36 @@ export default function PricingPage() {
         return;
       }
 
-      const res = await fetch("/api/stripe/checkout", {
+      let res = await fetch("/api/lemonsqueezy/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interval: annual ? "yearly" : "monthly" }),
       });
+
+      // If Lemon Squeezy is not configured yet, fallback gracefully to Stripe
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        if (errorData.error?.includes("Lemon Squeezy is not fully configured")) {
+          res = await fetch("/api/stripe/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ interval: annual ? "yearly" : "monthly" }),
+          });
+        } else {
+          alert(errorData.error || "Error al iniciar el pago");
+          return;
+        }
+      }
 
       const data = await res.json();
 
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Error creating checkout session");
+        alert(data.error || "Error al crear la sesión de pago");
       }
     } catch {
-      alert("Something went wrong. Please try again.");
+      alert("Ocurrió un error inesperado. Por favor, reintenta.");
     } finally {
       setLoading(false);
     }
