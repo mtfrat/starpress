@@ -94,28 +94,51 @@ const faqs = [
   {
     question: "¿Cómo funciona la conexión con Google Maps?",
     answer:
-      "Simplemente pegas el enlace público de tu negocio en Google Maps o inicias sesión con tu cuenta de Google Business Profile. StarPress extrae y organiza tus reseñas de manera automática y segura.",
+      "Simplemente pegas el enlace público de tu negocio en Google Maps o inicias sesión con tu cuenta de Google Business Profile. StarPress extrae y organiza tus reseñas de manera automática y segura mediante sincronización oficial.",
   },
   {
     question: "¿Los widgets de reseñas afectan la velocidad de mi sitio web?",
     answer:
-      "No. Nuestros scripts están optimizados para cargar de forma asíncrona y pesan menos de 15KB, garantizando 100% de rendimiento en Google Core Web Vitals.",
+      "No. Nuestros scripts están optimizados para cargar de forma asíncrona y pesan menos de 15KB, garantizando 100% de rendimiento en Google Core Web Vitals y sin bloquear el renderizado.",
   },
   {
     question: "¿Puedo exportar imágenes para publicar en Instagram y LinkedIn?",
     answer:
-      "Sí. Con un clic puedes convertir cualquier reseña de 5 estrellas en una pieza gráfica con diseño editorial de revista en resolución 3x Retina, lista para descargar y postear.",
+      "Sí. Con un solo clic puedes convertir cualquier reseña de 5 estrellas en una pieza gráfica con diseño editorial de revista en resolución 3x Retina (PNG de alta definición), lista para feed o stories.",
   },
   {
-    question: "¿Qué incluye el plan gratuito?",
+    question: "¿Qué es el sistema de Review Gating y cómo funciona el código QR?",
     answer:
-      "El plan gratuito te permite gestionar una ubicación completa, insertar widgets ilimitados de reseñas y código QR de captura de clientes para siempre, sin tarjeta de crédito.",
+      "El Review Gating es un embudo inteligente: al escanear tu código QR en el local, los clientes que califican con 4 o 5 estrellas son redirigidos directamente a Google Maps, mientras que los clientes con quejas de 1 a 3 estrellas son derivados a un formulario privado interno para que puedas solucionar el problema sin perjudicar tu puntaje público.",
+  },
+  {
+    question: "¿Qué incluye el plan gratuito de StarPress?",
+    answer:
+      "El plan gratuito te permite gestionar una ubicación completa de negocio, insertar widgets web ilimitados y generar tu código QR de captura para siempre, sin necesidad de ingresar tarjeta de crédito.",
   },
 ];
+
+const jsonLdFAQ = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((faq) => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer,
+    },
+  })),
+};
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#f9f8f6] text-[#171417] antialiased selection:bg-[#eaebf8] selection:text-[#0c1754]">
+      {/* Schema.org FAQPage for Google Rich Snippets & AI Engines */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFAQ) }}
+      />
       {/* Top Navigation Bar — Officevibe Style */}
       <header className="sticky top-0 z-40 bg-[#f9f8f6]/90 backdrop-blur-md">
         <div className="mx-auto flex h-20 max-w-[1200px] items-center justify-between px-6">
@@ -446,6 +469,182 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social Media Generator Showcase Section (Interactive Visuals) */}
+      <section className="border-t border-[#f0e9e1] bg-[#f9f8f6] px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-[1200px]">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#969696]">
+              Estudio Creativo para Redes
+            </span>
+            <h2 className="font-editorial mt-3 text-3xl font-normal tracking-tight text-[#0c1754] md:text-5xl">
+              Tus reseñas 5★ convertidas en piezas de{" "}
+              <em className="font-editorial italic font-normal text-[#2545ff]">diseño editorial</em>
+            </h2>
+            <p className="mt-4 text-base text-[#222222]/80 leading-relaxed">
+              Exporta con 1 solo clic en resolución Retina 3x para Instagram, LinkedIn y X. Elige entre la calidez del papel crema o el lujo de nuestro azul noche con copies redactados por IA.
+            </p>
+          </div>
+
+          {/* Side-by-side Visual Showcase */}
+          <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+            {/* Template 1: Editorial Cream */}
+            <div className="flex flex-col justify-between rounded-[20px] border border-[#f0e9e1] bg-white p-6 sm:p-8 shadow-[0_16px_40px_rgba(12,23,84,0.06)]">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eaebf8] px-3 py-1 text-xs font-bold text-[#0c1754]">
+                    <span className="h-2 w-2 rounded-full bg-[#2545ff]" />
+                    Opción 1: Editorial Cream
+                  </span>
+                  <span className="text-xs text-[#969696] font-medium">Feed Diurno / LinkedIn</span>
+                </div>
+
+                {/* Card Preview Mockup */}
+                <div className="rounded-[16px] border border-[#f0e9e1] bg-[#f9f8f6] p-6 text-center">
+                  <div className="text-[#2545ff] text-base mb-3">★★★★★</div>
+                  <p className="font-editorial italic text-base sm:text-lg text-[#0c1754] leading-relaxed mb-4">
+                    &ldquo;El servicio superó todas las expectativas. La atención a los detalles y la calidez del equipo hicieron que la experiencia fuera inolvidable.&rdquo;
+                  </p>
+                  <div className="inline-flex items-center gap-2 pt-3 border-t border-[#f0e9e1]">
+                    <span className="text-xs font-bold text-[#0c1754]">Valentina Rossi</span>
+                    <span className="text-[11px] text-[#969696]">· Google Maps</span>
+                    <span className="text-xs text-[#2545ff]">✓</span>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-xl bg-white border border-[#f0e9e1] p-4 text-xs text-[#222222]/80">
+                  <span className="font-bold text-[#0c1754] block mb-1">Copy de IA listo para publicar:</span>
+                  <p className="italic text-[#969696]">
+                    &ldquo;Cuando nuestros clientes se toman el tiempo de describir su experiencia con tanta precisión, sabemos que el esfuerzo vale la pena...&rdquo;
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-[#f0e9e1] flex items-center justify-between text-xs text-[#969696]">
+                <span>Resolución 1080x1080 (3x Retina)</span>
+                <span className="font-semibold text-[#2545ff]">Exportación PNG</span>
+              </div>
+            </div>
+
+            {/* Template 2: Ink Navy Luxury */}
+            <div className="flex flex-col justify-between rounded-[20px] bg-[#0c1754] p-6 sm:p-8 text-white shadow-[0_20px_50px_rgba(12,23,84,0.25)]">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white">
+                    <span className="h-2 w-2 rounded-full bg-[#2545ff]" />
+                    Opción 2: Ink Navy Luxury
+                  </span>
+                  <span className="text-xs text-[#eaebf8]/70 font-medium">Alto Contraste / Stories</span>
+                </div>
+
+                {/* Card Preview Mockup */}
+                <div className="rounded-[16px] border border-white/10 bg-[#09113d] p-6 text-center">
+                  <div className="text-[#fbbf24] text-base mb-3">★★★★★</div>
+                  <p className="font-editorial italic text-base sm:text-lg text-white leading-relaxed mb-4">
+                    &ldquo;El estándar de profesionalismo y dedicación es incomparable. Sin duda se han convertido en nuestra primera opción.&rdquo;
+                  </p>
+                  <div className="inline-flex items-center gap-2 pt-3 border-t border-white/10">
+                    <span className="text-xs font-bold text-white">Dr. Martín Silva</span>
+                    <span className="text-[11px] text-[#eaebf8]/60">· Google Review</span>
+                    <span className="text-xs text-[#2545ff]">✓</span>
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-xl bg-white/5 border border-white/10 p-4 text-xs text-[#eaebf8]/80">
+                  <span className="font-bold text-white block mb-1">Copy de IA de alto impacto:</span>
+                  <p className="italic text-[#eaebf8]/60">
+                    &ldquo;&lsquo;El estándar de profesionalismo es incomparable&rsquo;. Orgullosos de mantener nuestro estándar 5★ en Google Maps gracias a ustedes...&rdquo;
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-[#eaebf8]/60">
+                <span>Formato cuadrado y vertical</span>
+                <span className="font-semibold text-white">Exportación PNG</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Review Gating & QR Funnel Section */}
+      <section className="border-t border-[#f0e9e1] bg-white px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-[1200px]">
+          <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-6">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#f0e9e1] bg-[#f9f8f6] px-4 py-1.5 shadow-xs">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#0c1754]">
+                  Filtro Inteligente de Mostrador
+                </span>
+              </div>
+              <h2 className="font-editorial text-3xl font-normal tracking-tight text-[#0c1754] sm:text-4xl md:text-5xl">
+                Protege tu promedio de Google con nuestro{" "}
+                <em className="font-editorial italic font-normal text-[#2545ff]">Kit QR Inteligente</em>
+              </h2>
+              <p className="mt-6 text-base leading-relaxed text-[#222222]/85">
+                Imprime tu código QR en mesas, recepciones, cartas o tickets. El sistema detecta automáticamente la satisfacción del cliente antes de enviarlo a internet:
+              </p>
+
+              <div className="mt-8 space-y-4">
+                <div className="flex items-start gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white font-bold text-xs">
+                    5★
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-emerald-900">
+                      Clientes Felices (4 y 5 Estrellas)
+                    </h4>
+                    <p className="mt-1 text-xs text-emerald-800 leading-relaxed">
+                      Redirigidos automáticamente a Google Maps para dejar su reseña pública y potenciar tu SEO local.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 rounded-2xl border border-amber-100 bg-amber-50/50 p-4">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white font-bold text-xs">
+                    1-3★
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-amber-900">
+                      Clientes Insatisfechos (1 a 3 Estrellas)
+                    </h4>
+                    <p className="mt-1 text-xs text-amber-800 leading-relaxed">
+                      Enviados a un buzón privado interno para que puedas solucionar su queja y contactarlos sin que dañen tu calificación en Google.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 flex justify-center">
+              <div className="w-full max-w-sm rounded-[24px] border border-[#f0e9e1] bg-[#f9f8f6] p-8 text-center shadow-lg">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#eaebf8] text-2xl text-[#2545ff]">
+                  📱
+                </div>
+                <h3 className="font-editorial text-2xl font-normal text-[#0c1754]">
+                  Kit QR Imprimible
+                </h3>
+                <p className="mt-1 text-xs text-[#969696] mb-6">
+                  Generado automáticamente con el nombre de tu negocio.
+                </p>
+
+                <div className="mx-auto w-48 h-48 rounded-2xl bg-white p-4 border border-[#f0e9e1] shadow-xs flex items-center justify-center">
+                  <div className="space-y-2 text-center">
+                    <span className="text-4xl block">🏁</span>
+                    <span className="text-[11px] font-bold text-[#0c1754] block">ESCANEAR PARA OPINAR</span>
+                    <span className="text-[10px] text-[#2545ff] block">Google Reviews</span>
+                  </div>
+                </div>
+
+                <p className="mt-6 text-xs text-[#0c1754] font-medium">
+                  ✓ Incluido en todos los planes · Listo para imprimir
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

@@ -6,46 +6,45 @@ import Link from "next/link";
 
 const plans = [
   {
-    name: "Free",
+    name: "Plan Gratuito",
     price: "$0",
-    period: "forever",
-    description: "Perfecto para empezar a recopilar reseñas",
+    period: "para siempre",
+    description: "Ideal para pequeños negocios locales que dan sus primeros pasos con prueba social.",
     features: [
-      "1 ubicación",
-      "Badge widget en tu web",
-      "List widget embebible",
-      "Tarjeta de reseña descargable",
-      "QR de feedback",
-      "Hasta 50 reseñas",
-      "Análisis de sentimiento básico",
+      "1 negocio o sucursal conectado",
+      "Widgets web: Insignia y Muro de testimonios",
+      "Generador de tarjetas para redes (Retina 3x)",
+      "Kit QR de mostrador imprimible",
+      "Buzón privado de sugerencias",
+      "Hasta 50 reseñas sincronizadas",
+      "Diagnóstico básico de satisfacción",
     ],
-    cta: "Empezar Gratis",
+    cta: "Comenzar Gratis",
     href: "/auth/signup",
     popular: false,
   },
   {
-    name: "Pro",
+    name: "Plan Pro",
     price: "$19",
     period: "/mes",
     yearlyPrice: "$190",
     yearlyPeriod: "/año",
     save: "Ahorra 17%",
-    description: "Para negocios que quieren hacer crecer su reputación",
+    description: "Para marcas y profesionales que quieren automatizar su reputación y multiplicar clientes.",
     features: [
-      "Ubicaciones ilimitadas",
-      "Carousel widget auto-rotativo",
-      "Respuestas AI en el idioma de la reseña",
-      "Análisis semanal con AI",
-      "Alertas por email de reseñas negativas",
-      "Respuesta directa a Google",
-      "Sincronización con Google Business",
-      "Webhooks personalizados",
-      "Disputa de reseñas falsas con AI",
-      "Schema markup SEO automático",
-      "Reseñas ilimitadas",
-      "Sin marca de agua",
+      "Ubicaciones y sucursales ilimitadas",
+      "Widgets avanzados: Carrusel auto-rotativo interactivo",
+      "Respuestas automáticas con IA en el idioma del cliente",
+      "Detección y solicitud de disputa de reseñas falsas con IA",
+      "Sincronización oficial con Google Business Profile",
+      "Alertas tempranas por email ante reseñas negativas",
+      "Reporte ejecutivo semanal con plan de acción",
+      "Sin marca de agua en widgets ni tarjetas",
+      "Reseñas y widgets embebibles ilimitados",
+      "Schema markup SEO automático para Google",
+      "Webhooks personalizados e integraciones",
     ],
-    cta: "Upgrade a Pro",
+    cta: "Comenzar con Pro",
     href: "#",
     popular: true,
   },
@@ -120,6 +119,42 @@ export default function PricingPage() {
       </header>
 
       {/* Hero */}
+      {/* Schema FAQPage for Pricing Rich Results & AI Engines */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "¿Puedo cancelar mi suscripción en cualquier momento?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sí, sin contratos forzosos. Podés cancelar desde el portal de facturación en cualquier momento y mantendrás el plan Pro hasta finalizar el ciclo abonado."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Qué sucede con mis reseñas si decido volver al plan Free?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Absolutamente nada. Tu historial y ubicaciones se conservan intactos. Simplemente volverás a las capacidades del plan gratuito sin perder datos."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "¿Ofrecen garantía de satisfacción?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Si durante los primeros 7 días sientes que StarPress no aportó valor a tu negocio, escribinos a soporte y te reembolsamos el 100% de tu pago."
+                }
+              }
+            ]
+          }),
+        }}
+      />
       <div className="px-6 pt-20 pb-12 text-center">
         <div className="mx-auto max-w-3xl">
           <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#969696]">

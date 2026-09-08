@@ -229,37 +229,37 @@ export default function SettingsPage() {
 
           {/* Billing Section */}
           <section className="rounded-2xl border border-[#f0e9e1] bg-white p-6 shadow-xs">
-            <h2 className="text-sm font-bold text-[#0c1754] mb-4">Billing</h2>
+            <h2 className="font-editorial text-xl font-normal text-[#0c1754] mb-4">Suscripción y Facturación</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-semibold text-[#171417]">Current Plan</p>
+                  <p className="text-xs font-semibold text-[#171417]">Plan Actual</p>
                   <p className="text-xs text-[#969696] mt-0.5">
-                    {profile?.plan_tier === "pro" ? "Pro — $19/month" : "Free"}
+                    {profile?.plan_tier === "pro" ? "Plan Pro — $19 USD / mes (Facturación Activa)" : "Plan Gratuito — $0 USD (1 negocio incluido)"}
                   </p>
                 </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+                <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
                   profile?.plan_tier === "pro"
-                    ? "bg-purple-100 text-purple-700"
-                    : "bg-slate-100 text-slate-600"
+                    ? "bg-[#eaebf8] text-[#2545ff]"
+                    : "bg-[#f0e9e1] text-[#0c1754]"
                 }`}>
-                  {profile?.plan_tier || "free"}
+                  {profile?.plan_tier === "pro" ? "Pro" : "Gratis"}
                 </span>
               </div>
               {profile?.plan_tier === "pro" && (
                 <button
                   onClick={handleManageBilling}
-                  className="h-11 rounded-full border border-[#f0e9e1] px-6 text-xs font-semibold text-[#0c1754] hover:bg-[#f9f8f6] transition cursor-pointer"
+                  className="h-10 rounded-full border border-[#f0e9e1] bg-[#f9f8f6] px-5 text-xs font-semibold text-[#0c1754] hover:bg-white hover:border-[#cccccc] transition cursor-pointer"
                 >
-                  Manage Billing (Stripe Portal)
+                  Administrar Suscripción (Portal Stripe)
                 </button>
               )}
               {profile?.plan_tier !== "pro" && (
                 <Link
                   href="/pricing"
-                  className="inline-flex h-11 items-center rounded-full bg-[#2545ff] px-6 text-xs font-semibold text-white hover:bg-[#1a38e8] transition"
+                  className="inline-flex h-10 items-center justify-center rounded-full bg-[#2545ff] px-6 text-xs font-semibold text-white hover:bg-[#1a38e8] transition shadow-xs"
                 >
-                  Upgrade to Pro
+                  Actualizar al Plan Pro ($19/mes) →
                 </Link>
               )}
             </div>
